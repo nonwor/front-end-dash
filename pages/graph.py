@@ -1,15 +1,22 @@
+#graph
+import dash
 from dash import Dash, html, dcc, callback, Output, Input
 import plotly.express as px
 import pandas as pd 
 
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder_unfiltered.csv')
 
-app = Dash(__name__)
+dash.register_page(
+	__name__,
+	path='/graph',
+	title='My graph',
+	name='Duble graph'
+)
 
 #
 var_selected = ["",""]
 
-app.layout = html.Div([
+layout = html.Div([
 	html.H1(children='Hello World Dash', style={'textAlign':'center'}),
 	dcc.Dropdown(df.country.unique(), 'Canada', id='dropdown-selection-1'),
 	dcc.Graph(id='graph-content-1'),
@@ -68,6 +75,3 @@ def update_output(input1, input2):
 		print("second input is not a number")
 
 	return str(firstInput + secondInput)
-
-if __name__ == '__main__':
-	app.run(debug=True)

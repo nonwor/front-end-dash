@@ -1,24 +1,19 @@
 #main.py
-from dash import Dash, html, dcc, callback, Output, Input
-import page1
-import page2
+import dash
+from dash import Dash, html, dcc
 
-app = Dash(__name__)
+
+app = Dash(__name__, use_pages = True)
 
 app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
+	html.H1('Muti-page app with Dash Pages'),
+	html.Div([
+		html.Div(
+			dcc.Link(f"{page['name']}-{page['path']}", href=page["relative_path"])
+		) for page in dash.page_registry.values()
+	]),
+    dash.page_container
 ])
-
-@app.callback(Output('page-content', 'children'),
-              [Input('url', 'pathname')])
-def display_page(pathname):
-    if pathname == '/page-1':
-        return page1.layout
-    elif pathname == '/page-2':
-        return page2.layout
-    else:
-        return '404 Page Not Found'
 
 if __name__ == '__main__':
     app.run_server(debug=True)
