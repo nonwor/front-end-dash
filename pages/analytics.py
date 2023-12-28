@@ -52,15 +52,18 @@ def update_city_selected(input_value):
 def get_api(n_clicks, value):
     print(type(value),value)
 
-    api_endpoint = 'https://swapi.dev/api/people/'+value
+    # api_endpoint = 'https://swapi.dev/api/people/'+value
+    api_endpoint = "local address/"
 
     try: 
         response = requests.get(api_endpoint)
 
         if response.status_code == 200:
-            data = response.json()
-            print(data['name'])
-            return(data['name'])
+            # data = response.json()
+            # print(data['name'])
+            # return(data['name'])
+            print(response.text)
+            return(response.text)
         else:
             print("API Error")
             print(response.status_code)
