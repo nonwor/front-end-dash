@@ -50,10 +50,12 @@ def update_city_selected(input_value):
 )
 
 def get_api(n_clicks, value):
+    if value == None:
+        return("Please provide input")
     print(type(value),value)
 
     # api_endpoint = 'https://swapi.dev/api/people/'+value
-    api_endpoint = "local address/"
+    api_endpoint = "http://127.0.0.1:5000/user/" + value
 
     try: 
         response = requests.get(api_endpoint)
@@ -65,12 +67,12 @@ def get_api(n_clicks, value):
             print(response.text)
             return(response.text)
         else:
-            print("API Error")
+            #Handle Data error
+            print(response.text)
             print(response.status_code)
+            return("API ERROR")
     except Exception as e:
         print(e)
 
-    return 'The input value was "{}" and the button has been clicked {} times'.format(
-        value,
-        n_clicks
-    )
+
+
