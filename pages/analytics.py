@@ -3,6 +3,7 @@
 import dash
 from dash import Dash, dcc, html, Input, Output, State, callback
 import requests
+import json
 
 dash.register_page(
     __name__,
@@ -26,8 +27,9 @@ layout = html.Div([
     html.Div(id="analytics-output"),
     html.Br(),
     html.Br(),
-    html.Div(dcc.Input(id='input-on-submit', type='text')),
-    html.Button('Submit', id='submit-val', n_clicks=0),
+    dcc.Input(id='input-1', type='text', value=''),
+    dcc.Input(id='input-2', type='text', value=''),
+    html.Button('Submit', id='submit-button', n_clicks=0),
     html.Div(id='container-button-basic',
              children='Enter a value and press submit')
 ])
@@ -42,37 +44,47 @@ def update_city_selected(input_value):
     return f'you selected:{input_value}'
 
 
+# @callback(
+#     Output('container-button-basic', 'children'),
+#     # Input('submit-val', 'n_clicks'),
+#     [Input('input-1', 'value-1'),
+# 	 Input('input-2', 'value-2')],
+#     State('input-on-submit', 'value'),
+#     prevent_initial_call=True
+# )
 @callback(
     Output('container-button-basic', 'children'),
-    Input('submit-val', 'n_clicks'),
-    State('input-on-submit', 'value'),
+    Input('submit-button', 'n_clicks'),
+    State('input-1', 'value'),
+    State('input-2', 'value'),
     prevent_initial_call=True
 )
 
-def get_api(n_clicks, value):
-    if value == None:
-        return("Please provide input")
-    print(type(value),value)
+def get_api(n_clicks, input1_value, input2_value):
+    # if value == None:
+    #     return("Please provide input")
+    print(input1_value, input2_value)
 
-    # api_endpoint = 'https://swapi.dev/api/people/'+value
-    api_endpoint = "http://127.0.0.1:5000/user/" + value
 
-    try: 
-        response = requests.get(api_endpoint)
+    url = "http://127.0.0.1:5000/user"
+    headers = {"Content-Type": "application/json"}
+    payload = {"name": input1_value, "email": input2_value}
+    json_string = json.dumps(payload)
 
-        if response.status_code == 200:
-            # data = response.json()
-            # print(data['name'])
-            # return(data['name'])
-            print(response.text)
-            return(response.text)
-        else:
-            #Handle Data error
-            print(response.text)
-            print(response.status_code)
-            return("API ERROR")
-    except Exception as e:
-        print(e)
+    userOBJ = {}
+    try:
+        response = requests.get(url, headers=headers, data=json_string)
+        print(response.status_code)
+        print(response.text)
+        print(type(response.text))
+        userOBJ = json.loads(response.text)
+        
+    except:
+        print("server error")
+        return("cannot find user")
+
+    return("User ID = ", userOBJ['id'])
+
 
 
 
